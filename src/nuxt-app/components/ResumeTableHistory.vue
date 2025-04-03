@@ -46,7 +46,8 @@ if (props.name === 'resumeLicense') {
                 <div v-if="index < maxNumRows" class="row">
                     <div class="resume-year"
                         :style="{ 'top': (props.top + props.step + index * props.step) + props.unit }">
-                        {{ format.year(resumeState.resumeCalender.value, row['resume-year']) }}
+                        {{ format.year(resumeState.resumeCalender.value, row['resume-year']) }} {{
+                            String(row['resume-year']).length > 0 ? '年' : '' }}
                     </div>
                     <div class="resume-month"
                         :style="{ 'top': (props.top + props.step + index * props.step) + props.unit }">
