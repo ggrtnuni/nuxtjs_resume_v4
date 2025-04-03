@@ -8,6 +8,7 @@ Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduct
 - WSL2
 - Ubuntu 22.04.5 LTS
 - Docker version 28.0.1, build 068a01e
+- Docker image node:22-slim
 
 ## Nuxt3 の Docker 作成
 
