@@ -128,13 +128,13 @@ export const useResumeState = () => {
         resumeContactAddressText() {
             let result = '';
             if (validator.postalcode(this.resumeContactPostalcode.value)) {
-                result = '〒 ' + this.resumeContactPostalcode;
+                result = '〒 ' + this.resumeContactPostalcode.value;
             }
             if (validator.string(this.resumeContactAddress.value)) {
                 if (result.length > 0) {
                     result += "\n";
                 }
-                result += this.resumeContactAddress;
+                result += this.resumeContactAddress.value;
             }
             return result;
         },
