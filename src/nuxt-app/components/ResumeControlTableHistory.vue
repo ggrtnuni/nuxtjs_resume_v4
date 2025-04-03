@@ -4,6 +4,7 @@
  * 
  * @author ggrtn
  */
+import { type ResumeHistory } from '~/types/resume';
 
 // props
 interface Props {
@@ -15,7 +16,7 @@ const props = defineProps<Props>();
 const resumeState = useResumeState();
 
 // 上流から受け取った name の値によってデータソースを「学歴・職歴」「免許・資格」のどちらかに切り替える。
-let target = resumeState.resumeHistory;
+let target: Ref<ResumeHistory, ResumeHistory> = resumeState.resumeHistory;
 if (props.name === 'resumeLicense') {
     target = resumeState.resumeLicense;
 }

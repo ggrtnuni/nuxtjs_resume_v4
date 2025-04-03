@@ -53,7 +53,7 @@ if (props.name === 'resumeLicense') {
                         {{ row['resume-month'] }}
                     </div>
                     <div class="resume-text"
-                        :style="{ 'top': (props.top + props.step + index * props.step) + props.unit, 'text-align': row.right ? 'right' : 'inherit' }">
+                        :style="{ 'top': (props.top + props.step + index * props.step) + props.unit, 'text-align': row['right'] ? 'right' : 'inherit' }">
                         {{ row['resume-text'] }}
                     </div>
                 </div>

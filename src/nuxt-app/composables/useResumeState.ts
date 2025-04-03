@@ -8,32 +8,63 @@ import { ref } from 'vue';
 import format from '~/utils/format';
 import validator from '~/utils/validator';
 import { type ResumeHistory, type ResumeJson } from '~/types/resume'; // verbatimModuleSyntax
+import { usePersistStorage } from '~/composables/usePersistStorage';
 
-const resumeDate = ref<string>(format.date());
-const resumeNameKana = ref<string>('');
-const resumeName = ref<string>('');
-const resumeGender = ref<string>('0');
-const resumeBirthday = ref<string>('');
-const resumePostalcode = ref<string>('');
-const resumeAddressKana = ref<string>('');
-const resumeAddress = ref<string>('');
-const resumeEmail = ref<string>('');
-const resumeTel = ref<string>('');
-const resumeMobile = ref<string>('');
-const resumeContactPostalcode = ref<string>('');
-const resumeContactAddressKana = ref<string>('');
-const resumeContactAddress = ref<string>('');
-const resumeContactTel = ref<string>('');
-const resumeHistory = ref<ResumeHistory>({ rows: [] });
-const resumeLicense = ref<ResumeHistory>({ rows: [] });
-const resumeMotivation = ref<string>('');
-const resumeWish = ref<string>('');
+// const resumeDate = ref<string>(format.date());
+// const resumeNameKana = ref<string>('');
+// const resumeName = ref<string>('');
+// const resumeGender = ref<string>('0');
+// const resumeBirthday = ref<string>('');
+// const resumePostalcode = ref<string>('');
+// const resumeAddressKana = ref<string>('');
+// const resumeAddress = ref<string>('');
+// const resumeEmail = ref<string>('');
+// const resumeTel = ref<string>('');
+// const resumeMobile = ref<string>('');
+// const resumeContactPostalcode = ref<string>('');
+// const resumeContactAddressKana = ref<string>('');
+// const resumeContactAddress = ref<string>('');
+// const resumeContactTel = ref<string>('');
+// const resumeHistory = ref<ResumeHistory>({ rows: [] });
+// const resumeLicense = ref<ResumeHistory>({ rows: [] });
+// const resumeMotivation = ref<string>('');
+// const resumeWish = ref<string>('');
+
+// // view state
+// const resumeCalender = ref<string>('en');
+// const resumeContact = ref<boolean>(true);
+// const resumeVisibility = ref<boolean>(true);
+// const resumeSaveFilename = ref<string>('resume');
+
+// 注意： usePersistStorage を使う時点で SSR は不可能。ハイドレート時点で値が詰め込まれ、サーバ側と不一致になるため。
+const prefix = 'resume_v4_';
+const session = true;
+const resumeDate = usePersistStorage<string>('resumeDate', format.date(), { prefix, session });
+const resumeNameKana = usePersistStorage<string>('resumeNameKana', '', { prefix, session });
+const resumeName = usePersistStorage<string>('resumeName', '', { prefix, session });
+const resumeGender = usePersistStorage<string>('resumeGender', '0', { prefix, session });
+const resumeBirthday = usePersistStorage<string>('resumeBirthday', '', { prefix, session });
+const resumePostalcode = usePersistStorage<string>('resumePostalcode', '', { prefix, session });
+const resumeAddressKana = usePersistStorage<string>('resumeAddressKana', '', { prefix, session });
+const resumeAddress = usePersistStorage<string>('resumeAddress', '', { prefix, session });
+const resumeEmail = usePersistStorage<string>('resumeEmail', '', { prefix, session });
+const resumeTel = usePersistStorage<string>('resumeTel', '', { prefix, session });
+const resumeMobile = usePersistStorage<string>('resumeMobile', '', { prefix, session });
+const resumeContactPostalcode = usePersistStorage<string>('resumeContactPostalcode', '', { prefix, session });
+const resumeContactAddressKana = usePersistStorage<string>('resumeContactAddressKana', '', { prefix, session });
+const resumeContactAddress = usePersistStorage<string>('resumeContactAddress', '', { prefix, session });
+const resumeContactTel = usePersistStorage<string>('resumeContactTel', '', { prefix, session });
+const resumeHistory = usePersistStorage<ResumeHistory>('resumeHistory', { rows: [] }, { prefix, session });
+const resumeLicense = usePersistStorage<ResumeHistory>('resumeLicense', { rows: [] }, { prefix, session });
+const resumeMotivation = usePersistStorage<string>('resumeMotivation', '', { prefix, session });
+const resumeWish = usePersistStorage<string>('resumeWish', '', { prefix, session });
+const resumeIdPhoto = usePersistStorage<string>('resresumeIdPhotoumeWish', '', { prefix, session });
 
 // view state
-const resumeCalender = ref<string>('en');
-const resumeContact = ref<boolean>(true);
-const resumeVisibility = ref<boolean>(true);
-const resumeSaveFilename = ref<string>('resume');
+const resumeCalender = usePersistStorage<string>('resumeCalender', 'en', { prefix, session });
+const resumeContact = usePersistStorage<boolean>('resumeContact', true, { prefix, session });
+const resumeVisibility = usePersistStorage<boolean>('resumeVisibility', true, { prefix, session });
+const resumeSaveFilename = usePersistStorage<string>('resumeSaveFilename', 'resume', { prefix, session });
 
 export const useResumeState = () => {
     return {
@@ -112,6 +143,7 @@ export const useResumeState = () => {
         resumeLicense,
         resumeMotivation,
         resumeWish,
+        resumeIdPhoto,
 
         // view state
         resumeCalender,
@@ -140,6 +172,7 @@ export const useResumeState = () => {
             while (this.resumeLicense.value.rows.pop());
             this.resumeMotivation.value = '';
             this.resumeWish.value = '';
+            this.resumeIdPhoto.value = '';
         },
         loadResumeFromJson(json: ResumeJson) {
             this.empty();
@@ -169,6 +202,7 @@ export const useResumeState = () => {
             // });
             this.resumeMotivation.value = json.resumeMotivation;
             this.resumeWish.value = json.resumeWish;
+            this.resumeIdPhoto.value = json.resumeIdPhoto;
 
             this.resumeCalender.value = json.resumeCalender;
             this.resumeContact.value = json.resumeContact;
@@ -176,8 +210,35 @@ export const useResumeState = () => {
 
             // json.resumeIdPhoto;
         },
-        loadResumeFromFile() {
+        toJSON() {
+            const data = {
+                resumeDate: resumeDate.value,
+                resumeNameKana: resumeNameKana.value,
+                resumeName: resumeName.value,
+                resumeGender: resumeGender.value,
+                resumeBirthday: resumeBirthday.value,
+                resumePostalcode: resumePostalcode.value,
+                resumeAddressKana: resumeAddressKana.value,
+                resumeAddress: resumeAddress.value,
+                resumeEmail: resumeEmail.value,
+                resumeTel: resumeTel.value,
+                resumeMobile: resumeMobile.value,
+                resumeContactPostalcode: resumeContactPostalcode.value,
+                resumeContactAddressKana: resumeContactAddressKana.value,
+                resumeContactAddress: resumeContactAddress.value,
+                resumeContactTel: resumeContactTel.value,
+                resumeHistory: resumeHistory.value,
+                resumeLicense: resumeLicense.value,
+                resumeMotivation: resumeMotivation.value,
+                resumeWish: resumeWish.value,
 
-        },
+                resumeCalender: resumeCalender.value,
+                resumeContact: resumeContact.value,
+                resumeSaveFilename: resumeSaveFilename.value,
+                resumeIdPhoto: resumeIdPhoto.value,
+            }
+
+            return JSON.stringify(data, null, 2); // JSON 文字列に変換 (整形オプション付き)
+        }
     };
 }

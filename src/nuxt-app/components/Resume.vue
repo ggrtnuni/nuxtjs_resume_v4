@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 /**
  * 履歴書 コンポーネント
  * 
@@ -8,10 +9,34 @@
 // 履歴書状態
 const resumeState = useResumeState();
 
-watch(resumeState.resumeVisibility, (newValue, oldValue) => {
-    console.log([newValue, oldValue])
-});
+/**
+ * 証明写真を反映する
+ * @param dataUri 
+ */
+const applyIdPhoto = async (dataUri: string) => {
+    if (typeof window !== 'undefined') {
+        await nextTick(); // DOM 描画後を待つ
+        const imagePreview = document.querySelector('.resume-photo-img');
+        if (imagePreview) {
+            if (dataUri && dataUri.length > 0) {
+                if (imagePreview) {
+                    imagePreview.innerHTML = '';
 
+                    const photoImage = document.createElement('img');
+                    photoImage.src = dataUri;
+                    imagePreview.append(photoImage);
+                }
+            } else {
+                imagePreview.innerHTML = '';
+            }
+        }
+    }
+}
+
+// 証明写真の反映
+watch(resumeState.resumeIdPhoto, (newValue, oldValue) => {
+    applyIdPhoto(newValue);
+}, { immediate: true, deep: true, once: false });
 </script>
 
 <template>

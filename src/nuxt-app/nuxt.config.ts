@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint'],
+  modules: ['@nuxt/eslint', '@vueuse/nuxt'],
 
   vite: {
     plugins: [
@@ -25,7 +25,7 @@ export default defineNuxtConfig({
   },
 
   // SSR を無効にしたい場合 (SPA としてのみ利用する場合)
-  // ssr: false,
+  ssr: false,
 
   // ルートごとに設定を変更したい場合
   // routeRules: {

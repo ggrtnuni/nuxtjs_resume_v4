@@ -102,12 +102,24 @@ http://localhost:3000
 
 ## 公開用ビルド
 
+コンテナのシェルに入る。
+
 ```bash
+docker compose exec app sh
+```
+
+```bash
+cd /opt/src/nuxt-app
 npm run build
 ```
 
 ローカルでプレビューしたい場合。
 
+```bash
+node .output/server/index.mjs 
+```
+
+または、
 
 ```bash
 # npm

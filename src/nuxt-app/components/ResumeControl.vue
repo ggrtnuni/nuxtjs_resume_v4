@@ -40,6 +40,63 @@ watch(resumeState.resumeVisibility, (newValue, oldValue) => {
     showSectionWish.value = !newValue;
 });
 
+/**
+ * 証明写真を反映 (サイズ調整あり)
+ */
+const applyIdPhoto = (dataUri: string | null) => {
+    if (typeof window !== 'undefined') {
+        if (dataUri) {
+            // アスペクト比を 3:4 としてトリミング
+            const img = new Image();
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            if (ctx) {
+                img.style.display = 'none';
+                canvas.style.display = 'none';
+                document.body.appendChild(img);
+                document.body.appendChild(canvas);
+
+                img.onload = function () {
+                    const mimeType = 'image/png';
+
+                    let offsetWidth = 0;
+                    let offsetHeight = 0;
+                    let cropedWidth = img.naturalWidth;
+                    let cropedHeight = img.naturalHeight;
+                    if (img.naturalWidth / img.naturalHeight >= (3 / 4)) {
+                        // 3/4よりも横長 or 長方形
+                        cropedWidth = Math.ceil(img.naturalHeight * (3 / 4));
+                        offsetWidth = Math.ceil((img.naturalWidth - cropedWidth) / 2);
+                    } else {
+                        // 3/4よりも縦長
+                        cropedHeight = Math.ceil(img.naturalWidth * (4 / 3));
+                        offsetHeight = Math.ceil((img.naturalHeight - cropedHeight) / 2);
+                    }
+
+                    // 354 x 472 で保存する (dataUri が長くなりすぎないように)
+                    canvas.width = 354;
+                    canvas.height = 472;
+                    ctx.drawImage(img, offsetWidth, offsetHeight, cropedWidth, cropedHeight, 0, 0, 354, 472);
+                    const dataUri = canvas.toDataURL(mimeType);
+
+                    resumeState.resumeIdPhoto.value = dataUri;
+
+                    // 不要になった要素を削除
+                    document.body.removeChild(img);
+                    document.body.removeChild(canvas);
+                }
+                img.src = dataUri;
+            }
+        }
+    } else {
+        console.warn('ブラウザ環境ではありません。');
+    }
+}
+
+/**
+ * 印刷ボタンのハンドラ
+ */
 const printPage = () => {
     if (typeof window !== 'undefined') {
         window.print();
@@ -48,49 +105,64 @@ const printPage = () => {
     }
 };
 
+/**
+ * 保存(JSON)ボタンのハンドラ
+ */
 const confirmSave = () => {
     if (typeof window !== 'undefined') {
         // if ($data.isEmpty()) { window.alert('未入力です。'); } else { $data.downloadJSON() }
+        const now = new Date();
+        const saveFilename = resumeState.resumeSaveFilename.value.length > 0 ? resumeState.resumeSaveFilename.value : 'resume-v3';
+        const filename = String(now.getFullYear()) + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0')
+            + '-' + String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0') + String(now.getSeconds()).padStart(2, '0')
+            + '-' + saveFilename + '.json';
+
+        const json = resumeState.toJSON();
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url); // メモリリークを防ぐ
+
     } else {
         console.warn('ブラウザ環境ではありません。');
     }
 };
 
+/**
+ * 消去ボタンのハンドラ
+ */
 const confirmClearAll = () => {
     if (typeof window !== 'undefined') {
         if (confirm('記載した履歴書の情報を削除しますか？')) {
             resumeState.empty();
-            const imagePreview = document.querySelector('.resume-photo-img');
-            if (imagePreview) {
-                imagePreview.innerHTML = '';
-            }
         }
     } else {
         console.warn('ブラウザ環境ではありません。');
     }
 };
 
+/**
+ * 読込(JSON)のハンドラ
+ */
 const handleUploadJson = (response: any) => {
     // console.log(response.data)
     const jsonData = JSON.parse(response.data);
     // console.log("展開された JSON データ:", Object.keys(jsonData));
     resumeState.loadResumeFromJson(jsonData);
-
-    if (jsonData.resumeIdPhoto) {
-        const imagePreview = document.querySelector('.resume-photo-img');
-        if (imagePreview) {
-            imagePreview.innerHTML = '';
-
-            const photoImage = document.createElement('img');
-            photoImage.src = jsonData.resumeIdPhoto;
-            imagePreview.append(photoImage);
-        }
-    }
 }
 
-const handleUploadImage = (image: any) => {
+/**
+ * 証明写真アップロードのハンドラ
+ * @param image 
+ */
+const handleUploadIdPhoto = (response: any) => {
+    applyIdPhoto(response.data);
 }
-
 </script>
 
 <template>
@@ -131,7 +203,7 @@ const handleUploadImage = (image: any) => {
                     <div v-show="showSectionLoad" x-transition>
                         <!-- <input type="file" id="jsonUpload" accept="application/json"> -->
                         <ResumeControlFileUpload formId="jsonUpload" accept="application/json"
-                            @upload="handleUploadJson" />
+                            @upload="handleUploadJson" buttonLabel="反映" />
                     </div>
                 </div>
             </div>
@@ -177,7 +249,8 @@ const handleUploadImage = (image: any) => {
                     </div>
                     <div v-show="showSectionPhoto" x-transition>
                         <!-- <input type="file" id="imageUpload" accept="image/*"> -->
-                        <ResumeControlFileUpload formId="jsonUpload" accept="image/*" />
+                        <ResumeControlFileUpload formId="imageUpload" accept="image/*" @upload="handleUploadIdPhoto"
+                            buttonLabel="反映" :asDataUrl="true" />
                     </div>
                 </div>
             </div>
