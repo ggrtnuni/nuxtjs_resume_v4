@@ -1,0 +1,11 @@
+/* コントロール */
+.control {
+    margin-top: 18mm;
+    position: relative;
+}
+
+.control-wide {
+    max-width: 254mm;
+    margin-left: 18mm;
+    margin-right: 18mm;
+}
