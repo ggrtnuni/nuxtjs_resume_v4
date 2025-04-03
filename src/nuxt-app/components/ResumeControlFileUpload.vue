@@ -148,12 +148,9 @@ const handleUpload = async () => {
                 <p>ドラッグ＆ドロップでファイルを選択、<br />または</p>
                 <p class=" browse-button">ファイルを選択</p>
             </div>
-            <div v-else class="file-info">
+            <div v-else :class="{ 'file-info': true }">
                 <p>選択されたファイル:</p>
                 <p class="file-name">{{ selectedFile.name }}</p>
-                <button @click="clearFile" class="clear-button">
-                    ×
-                </button>
             </div>
         </label>
         <input type="file" :id="props.formId" class="file-input" @change="handleFileChange" :accept="props.accept" />
@@ -163,6 +160,9 @@ const handleUpload = async () => {
         <div class="button-container">
             <button @click="handleUpload" :disabled="!selectedFile || isUploading">
                 {{ props.buttonLabel }}
+            </button>
+            <button @click="clearFile" class="clear-button">
+                クリア
             </button>
         </div>
     </div>
@@ -205,8 +205,8 @@ const handleUpload = async () => {
 }
 
 .file-info {
-    display: flex;
-    align-items: center;
+    /* display: flex; */
+    /* align-items: center; */
     width: 100%;
     background-color: #fff;
     padding: 10px;
@@ -252,14 +252,12 @@ button:disabled {
     cursor: not-allowed;
 }
 
-button:hover {
-    background-color: #ccc;
-}
-
 .clear-button {
-    background-color: #dc3545;
-    color: white;
+    /* background-color: #dc3545; */
+    background-color: white;
+    color: black;
     border: none;
+    border: silver solid 1px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -267,11 +265,13 @@ button:hover {
     align-items: center;
     justify-content: center;
     line-height: 0;
-    width: 6mm;
+    width: 200px;
+    margin-top: 2mm;
 }
 
 .clear-button:hover {
-    background-color: #c82333;
+    /* background-color: #c82333; */
+    background-color: silver;
 }
 
 .error-message {

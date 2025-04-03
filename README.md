@@ -110,8 +110,11 @@ docker compose exec app sh
 
 ```bash
 cd /opt/src/nuxt-app
-npm run build
+npm run generate
 ```
+
+出来上がる .output/public の中身を適切な場所に置く。
+
 
 ローカルでプレビューしたい場合。
 

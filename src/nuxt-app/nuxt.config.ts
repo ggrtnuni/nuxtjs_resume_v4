@@ -22,6 +22,7 @@ export default defineNuxtConfig({
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap' },
       ],
     },
+    baseURL: process.env.NODE_ENV === 'development' ? '/' : '/dist/resume_v4/',
   },
 
   // SSR を無効にしたい場合 (SPA としてのみ利用する場合)
