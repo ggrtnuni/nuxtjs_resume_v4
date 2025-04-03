@@ -1,3 +1,9 @@
+/**
+ * 状態をローカル/セッションストレージにも保存
+ * 
+ * @author ggrtn
+ */
+
 import { ref, watch } from 'vue';
 import { type Serializer, StorageSerializers, useStorage } from '@vueuse/core';
 
@@ -11,6 +17,19 @@ interface UseLocalStorageOptions<T> {
     session?: boolean;
 }
 
+/**
+ * リアクティブな変数をローカル/セッションストレージにも保存する
+ * 
+ * const hoge = ref<string>('');
+ * ↓
+ * const hoge = usePersistStorage<string>('hoge', '', { prefix: 'tako_', session: true })
+ * → セッションストレージに tako_hoge というキー名で保存され、更新も連動する。
+ * 
+ * @param key 
+ * @param initialValue 
+ * @param options 
+ * @returns 
+ */
 export function usePersistStorage<T>(key: string, initialValue: T, options: UseLocalStorageOptions<T> = {}) {
     const {
         serializer = StorageSerializers.object,
