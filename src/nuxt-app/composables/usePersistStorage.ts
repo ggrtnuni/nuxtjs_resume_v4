@@ -7,7 +7,7 @@
 import { ref, watch } from 'vue';
 import { type Serializer, StorageSerializers, useStorage } from '@vueuse/core';
 
-interface UseLocalStorageOptions<T> {
+interface UsePersistStorageOptions<T> {
     // serializer?: StorageSerializers<T>;
     serializer?: Serializer<T>;
     immediate?: boolean;
@@ -30,7 +30,7 @@ interface UseLocalStorageOptions<T> {
  * @param options 
  * @returns 
  */
-export function usePersistStorage<T>(key: string, initialValue: T, options: UseLocalStorageOptions<T> = {}) {
+export function usePersistStorage<T>(key: string, initialValue: T, options: UsePersistStorageOptions<T> = {}) {
     const {
         serializer = StorageSerializers.object,
         immediate = true,
