@@ -112,7 +112,7 @@ const confirmSave = () => {
     if (typeof window !== 'undefined') {
         // if ($data.isEmpty()) { window.alert('未入力です。'); } else { $data.downloadJSON() }
         const now = new Date();
-        const saveFilename = resumeState.resumeSaveFilename.value.length > 0 ? resumeState.resumeSaveFilename.value : 'resume-v3';
+        const saveFilename = resumeState.resumeSaveFilename.value.length > 0 ? resumeState.resumeSaveFilename.value : 'resume-v4';
         const filename = String(now.getFullYear()) + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0')
             + '-' + String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0') + String(now.getSeconds()).padStart(2, '0')
             + '-' + saveFilename + '.json';

@@ -4,13 +4,13 @@
  * @author ggrtn
  */
 
-import { ref } from 'vue';
+// import { ref } from 'vue';
 import format from '~/utils/format';
 import validator from '~/utils/validator';
 import { type ResumeHistory, type ResumeJson } from '~/types/resume'; // verbatimModuleSyntax
 import { usePersistStorage } from '~/composables/usePersistStorage';
 
-// const resumeDate = ref<string>(format.date());
+// const resumeDate = ref<string>('');
 // const resumeNameKana = ref<string>('');
 // const resumeName = ref<string>('');
 // const resumeGender = ref<string>('0');
@@ -39,7 +39,7 @@ import { usePersistStorage } from '~/composables/usePersistStorage';
 // 注意： usePersistStorage を使う時点で SSR は不可能。ハイドレート時点で値が詰め込まれ、サーバ側と不一致になるため。
 const prefix = 'resume_v4_';
 const session = true;
-const resumeDate = usePersistStorage<string>('resumeDate', format.date(), { prefix, session });
+const resumeDate = usePersistStorage<string>('resumeDate', '', { prefix, session });
 const resumeNameKana = usePersistStorage<string>('resumeNameKana', '', { prefix, session });
 const resumeName = usePersistStorage<string>('resumeName', '', { prefix, session });
 const resumeGender = usePersistStorage<string>('resumeGender', '0', { prefix, session });
@@ -153,7 +153,7 @@ export const useResumeState = () => {
 
         // method
         empty() {
-            this.resumeDate.value = format.date();
+            this.resumeDate.value = '';
             this.resumeNameKana.value = '';
             this.resumeName.value = '';
             this.resumeGender.value = '0';

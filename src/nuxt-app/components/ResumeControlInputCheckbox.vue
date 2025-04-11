@@ -19,11 +19,15 @@ const emit = defineEmits(['change']);
 
 // states
 const inputValue = ref<boolean>(props.modelValue.value);
+
+watch(props.modelValue, (newValue) => {
+    inputValue.value = newValue;
+});
 </script>
 
 <template>
     <div class="mb-2">
-        <label for="{{ $id . '-label' }}" class="block text-nowrap text-gray-700 text-sm font-bold">
+        <label :for="`${name}-label`" class="block text-nowrap text-gray-700 text-sm font-bold">
             <slot />
         </label>
         <div class="flex items-center">
