@@ -34,6 +34,18 @@ WORKDIR /opt/src
 USER node
 ```
 
+ホスト側とボリュームを共有する `src` とその中の `src/nuxt-app/node_modules` はコンテナ起動前に作っておく。
+
+- コンテナ起動時に docker に作らせると所有者が root になってしまうため。
+- ホスト側ユーザとコンテナ側ユーザ (node) が共に uid:1000, gid:1000 前提。
+- uid, gid が食い違う場合は別途調整が必要。
+
+`nuxt-app` のところは作る予定のプロジェクト名。
+
+```bash
+mkdir -p src/nuxt-app/node_modules
+```
+
 `docker-compose.yml` を作る。
 
 ```yaml
@@ -57,15 +69,6 @@ volumes:
       type: none
       device: ./src/nuxt-app/node_modules
       o: bind
-```
-
-ホスト側とボリュームを共有する `/opt/src` とその中の `/opt/src/nuxt-app/node_modules` はコンテナ起動前に作っておく。
-- コンテナ起動時に docker に作らせると所有者が root になってしまうため。
-- ホスト側ユーザとコンテナ側ユーザ (node) が共に uid:1000, gid:1000 前提。
-- uid, gid が食い違う場合は別途調整が必要。
-
-```bash
-mkdir -p src/nuxt-app/node_modules
 ```
 
 コンテナ起動、起動していることを確認、コンテナのシェルに入る。
